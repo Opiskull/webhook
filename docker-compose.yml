@@ -2,10 +2,13 @@ version: "3"
 services:
   webhook:
     image: opiskull/webhook
+    container_name: blog_webhook
     volumes:
       - src-data:/src
       - output-data:/output
       - ./hooks:/hooks
+    environment:
+      - GITHUB_SECRET=mygithubsecret
     labels:
       - traefik.enable=true
       - traefik.frontend.rule=Host:hooks.peerzone.net
@@ -13,8 +16,10 @@ services:
       - traefik.docker.network=traefik-net
     networks:
       - traefik-net
-  blog:
+    restart: always
+  webfiles:
     image: nginx:alpine
+    container_name: blog_webfiles
     volumes:
       - output-data:/usr/share/nginx/html
     labels:
@@ -24,6 +29,7 @@ services:
       - traefik.docker.network=traefik-net
     networks:
       - traefik-net
+    restart: always
 volumes:
   src-data: {}
   output-data: {}
