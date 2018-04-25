@@ -1,0 +1,13 @@
+- id: publish-blog
+  execute-command: "/hooks/publish-blog.sh"
+  response-message: Publish Blog
+  response-headers:
+  - name: Access-Control-Allow-Origin
+    value: '*'
+  trigger-rule:
+    match:
+     type: payload-hash-sha1
+     secret: "{{ getenv "GITHUB_SECRET" }}"
+     parameter:
+       source: header
+       name: X-Hub-Signature

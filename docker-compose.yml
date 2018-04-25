@@ -1,0 +1,32 @@
+version: "3"
+services:
+  webhook:
+    image: opiskull/webhook
+    volumes:
+      - src-data:/src
+      - output-data:/output
+      - ./hooks:/hooks
+    labels:
+      - traefik.enable=true
+      - traefik.frontend.rule=Host:hooks.peerzone.net
+      - traefik.port=9000
+      - traefik.docker.network=traefik-net
+    networks:
+      - traefik-net
+  blog:
+    image: nginx:alpine
+    volumes:
+      - output-data:/usr/share/nginx/html
+    labels:
+      - traefik.enable=true
+      - traefik.frontend.rule=Host:blog.peerzone.net
+      - traefik.port=80
+      - traefik.docker.network=traefik-net
+    networks:
+      - traefik-net
+volumes:
+  src-data: {}
+  output-data: {}
+networks:
+  traefik-net:
+    external: true
